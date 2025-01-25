@@ -50,6 +50,43 @@ List of Status Codes to Handle:
 200, 201, 204, 400, 401, 403, 404, 405, 429, 500, 502, 503, 504
 */
 
+// Status code descriptions
+const statusDescriptions = {
+  200: "OK: The request has succeeded. The meaning of this status depends on the HTTP method used.",
+  201: "Created: The request has succeeded and a new resource has been created as a result.",
+  204: "No Content: The server successfully processed the request but is not returning any content.",
+  400: "Bad Request: The server cannot process the request due to client-side errors (e.g., malformed syntax).",
+  401: "Unauthorized: The client must authenticate itself to get the requested response.",
+  403: "Forbidden: The server understands the request but refuses to authorize it.",
+  404: "Not Found: The server has not found anything matching the request URI. This is often caused by a missing page or resource.",
+  405: "Method Not Allowed: The request method is not supported for the resource.",
+  429: "Too Many Requests: The user has sent too many requests in a given amount of time.",
+  500: "Internal Server Error: The server encountered an unexpected condition that prevented it from fulfilling the request.",
+  502: "Bad Gateway: The server received an invalid response from the upstream server.",
+  503: "Service Unavailable: The server is not ready to handle the request (e.g., maintenance).",
+  504: "Gateway Timeout: The server did not receive a timely response from the upstream server."
+};
+
+// GET endpoint at "/status-info"
+app.get('/status-info', (req, res) => {
+  const code = parseInt(req.query.code); 
+  if (!code) {
+      return res.status(400).json({ error: "Please provide a valid status code as a query parameter." });
+  }
+
+  const message = statusDescriptions[code];
+  if (!message) {
+      return res.status(404).json({ error: `Status code ${code} is not handled by this API.` });
+  }
+
+  // Return the status code and its description
+  res.json({
+      status: code,
+      message: message
+  });
+});
+
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Status Code API is running on http://localhost:${PORT}`);
